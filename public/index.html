@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Chaves Advogados - Portal Sigiloso</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-dark: #0f172a; --panel-bg: rgba(24, 33, 47, 0.95); --text-main: #f8fafc; --text-muted: #94a3b8; --primary: #c5a880; --primary-hover: #a3875e; --danger: #ef4444; --warning: #f59e0b; --success: #10b981; --border: #334155; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0a0f18 0%, #172235 100%); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .watermark { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; opacity: 0.03; background-image: repeating-linear-gradient(45deg, transparent, transparent 200px, #ffffff 200px, #ffffff 400px); display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 40px; font-size: 22px; font-weight: bold; color: white; user-select: none; text-transform: uppercase; }
+        .container { background: var(--panel-bg); backdrop-filter: blur(12px); padding: 40px; border-radius: 8px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); width: 100%; max-width: 650px; position: relative; z-index: 10; border: 1px solid var(--border); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 25px; }
+        .header-top h2 { margin: 0; font-size: 1.25em; font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 10px;}
+        .badge-sigilo { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 5px 12px; font-size: 0.75em; font-weight: 700; border-radius: 4px; letter-spacing: 1px; border: 1px solid rgba(239, 68, 68, 0.3); text-transform: uppercase; }
+        .input-group { margin-bottom: 20px; position: relative; }
+        label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.85em; font-weight: 500; text-transform: uppercase; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        input[type="text"], input[type="password"], select, input[type="number"] { width: 100%; padding: 14px 14px 14px 40px; box-sizing: border-box; background-color: rgba(0, 0, 0, 0.2); border: 1px solid var(--border); color: #fff; font-family: 'Inter', sans-serif; font-size: 1em; border-radius: 4px; appearance: none; }
+        input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 1px var(--primary); }
+        .error-msg { color: var(--danger); font-size: 0.8em; margin-top: 8px; display: none; font-weight: 600; align-items: center; gap: 5px; }
+        select option { background-color: var(--bg-dark); color: #fff; }
+        .termo-box { background: rgba(197, 168, 128, 0.05); border-left: 3px solid var(--primary); padding: 16px; margin: 20px 0; font-size: 0.85em; line-height: 1.6; color: #cbd5e1; }
+        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 4px; border: 1px solid var(--border);}
+        .checkbox-group input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+        .checkbox-group label { text-transform: none; color: #e2e8f0; cursor: pointer; font-size: 0.95em; line-height: 1.4; margin: 0; }
+        button { width: 100%; padding: 14px; background-color: var(--primary); border: none; color: #1e293b; font-size: 1em; font-weight: 700; cursor: pointer; border-radius: 4px; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; text-transform: uppercase; }
+        button:hover:not(:disabled) { background-color: var(--primary-hover); }
+        .btn-danger { background-color: transparent; border: 1px solid var(--danger); color: var(--danger); }
+        .btn-danger:hover { background-color: var(--danger); color: #fff; }
+        .btn-success { background-color: var(--success); color: #fff; }
+        .btn-secondary { background-color: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+        .btn-delete-user { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 4px; padding: 4px 8px; cursor: pointer; width: auto; margin-top: 0; }
+        .btn-delete-user:hover { background: var(--danger); color: #fff; }
+        #telaBloqueio { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 24, 0.95); z-index: 100; flex-direction: column; justify-content: center; align-items: center; text-align: center; border-radius: 8px; }
+        .lock-icon-wrapper { width: 80px; height: 80px; background: rgba(197, 168, 128, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; border: 1px solid rgba(197, 168, 128, 0.3); }
+        .lock-icon-wrapper i { font-size: 2.5em; color: var(--primary); }
+        .captcha-box { background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 25px; border-radius: 4px; margin: 15px 0 25px 0; width: 80%; }
+        .captcha-question { font-family: 'Inter', monospace; font-weight: 700; font-size: 1.8em; color: #fff; margin-bottom: 20px; letter-spacing: 4px; }
+        .blur-ativo { filter: blur(15px) grayscale(50%); pointer-events: none; user-select: none; }
+        .user-list { margin-top: 20px; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 4px; border: 1px solid var(--border); padding: 10px; }
+        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.9em; }
+        .user-info { display: flex; flex-direction: column; gap: 4px;}
+        .user-badge { font-size: 0.7em; padding: 3px 8px; border-radius: 2px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
+        .lvl-1 { background: #334155; color: #fff; } .lvl-2 { background: #0ea5e9; color: #fff; } .lvl-3 { background: #8b5cf6; color: #fff; } .lvl-4 { background: #c5a880; color: #1e293b; }
+        .doc-paper { background-color: #fcfcfc; color: #111827; padding: 50px 60px; border-radius: 2px; font-family: 'Merriweather', serif; line-height: 1.8; position: relative; text-align: justify; }
+        .stamp { position: absolute; top: 30px; right: 30px; color: rgba(220, 38, 38, 0.8); font-family: 'Inter', sans-serif; font-size: 1.2em; font-weight: 800; border: 3px solid rgba(220, 38, 38, 0.8); padding: 8px 20px; border-radius: 4px; transform: rotate(15deg); }
+        .redacted { background-color: #111827; color: #111827; user-select: none; padding: 0 6px; cursor: pointer; display: inline-block; line-height: 1.2; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+        .redacted:active { background-color: var(--primary); color: #111827; user-select: text; box-shadow: none; font-weight: bold;}
+        .redacted.denied { background-color: #7f1d1d; color: #7f1d1d; cursor: not-allowed; border: 1px solid #991b1b; }
+        .level-badge-censor { font-family: 'Inter', sans-serif; font-size: 0.55em; background: #ef4444; color: white; padding: 2px 5px; border-radius: 2px; position: absolute; transform: translateY(-18px); font-weight: bold; display: none; text-transform: uppercase; }
+        .redacted.denied:hover .level-badge-censor { display: inline-block; }
+        .loader { border: 3px solid rgba(197, 168, 128, 0.2); border-top: 3px solid var(--primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #areaAutenticacao { display: block; } #painelDiretor { display: none; } #documentoViewer { display: none; } .input-group-flex { display: flex; gap: 15px; }
+    </style>
+</head>
+<body>
+<div class="watermark"><span>SEGREDO DE JUSTIÇA</span> <span>IP: 192.168.1.104</span> <span>ART. 189 CPC</span></div>
+<div class="container" id="mainContainer">
+    <div id="telaBloqueio">
+        <div class="lock-icon-wrapper"><i class="fa-solid fa-scale-balanced"></i></div>
+        <h3 style="color: white; margin-bottom: 5px; font-family: 'Merriweather', serif;">Autos Bloqueados</h3>
+        <p style="font-size: 0.85em; color: #cbd5e1; padding: 0 30px; margin-bottom: 5px;" id="motivoBloqueio"></p>
+        <div class="captcha-box">
+            <span style="color: var(--text-muted); font-size: 0.85em; font-weight: bold; margin-bottom: 15px; display: block;"><i class="fa-solid fa-shield-halved"></i> DESBLOQUEIO ANTI-BOT</span>
+            <div id="captchaText" style="font-family: monospace; font-size: 1.8em; color: #fff; margin-bottom: 20px; letter-spacing: 4px; font-weight: bold;"></div>
+            <input type="number" id="captchaInput" placeholder="Resultado">
+        </div>
+        <button onclick="verificarCaptcha()" style="width: 80%;"><i class="fa-solid fa-unlock-keyhole"></i> Confirmar</button>
+    </div>
+
+    <!-- AREA DE LOGIN -->
+    <div id="areaAutenticacao">
+        <div class="header-top">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-scale-balanced" style="font-size: 2em; color: var(--primary);"></i>
+                <div>
+                    <h2 style="font-family: 'Merriweather', serif; color: #fff; margin-bottom: 2px;">Sales Chaves Advogados</h2>
+                    <span style="font-size: 0.7em; color: var(--text-muted); text-transform: uppercase;">Portal de Autos Sigilosos</span>
+                </div>
+            </div>
+        </div>
+        <div class="termo-box" style="margin-top: 0;">
+            <i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> <strong>Acesso Exclusivo a Associados</strong><br>
+            <span style="font-size: 0.85em; color: #fff; font-family: monospace;">Admin: <strong>000.000.000-00</strong> | Senha: <strong>admin</strong></span>
+        </div>
+        <form id="formLogin">
+            <div class="input-group">
+                <label>CPF do Advogado (11 dígitos)</label>
+                <div class="input-wrapper"><i class="fa-solid fa-id-card"></i><input type="text" id="loginCpf" maxlength="14" required placeholder="000.000.000-00"></div>
+            </div>
+            <div class="input-group">
+                <label>Senha Operacional</label>
+                <div class="input-wrapper"><i class="fa-solid fa-key"></i><input type="password" id="loginSenha" required placeholder="••••••••"></div>
+                <div id="loginError" class="error-msg"><i class="fa-solid fa-circle-exclamation"></i> <span id="loginErrorText"></span></div>
+            </div>
+            <button type="submit" id="btnLogin"><span id="btnLoginText">Ingressar</span><div class="loader" id="loginLoader"></div></button>
+        </form>
+    </div>
+
+    <!-- AREA DIRETOR (IAM) -->
+    <div id="painelDiretor">
+        <div class="header-top">
+            <h2><i class="fa-solid fa-briefcase" style="color: var(--primary);"></i> Gestão IAM</h2>
+            <span class="badge-sigilo" style="background: rgba(197, 168, 128, 0.2); color: var(--primary); border-color: var(--primary);"><i class="fa-solid fa-star"></i> Sócio / Master</span>
+        </div>
+        <button onclick="visualizarDocumento()" class="btn-secondary" style="margin-bottom: 25px;"><i class="fa-solid fa-folder-open"></i> Acessar Processo</button>
+        <h3 style="font-size: 1.05em; font-family: 'Merriweather', serif; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Novo Agente (Criptografia no Back-End)</h3>
+        <form id="formCadastroUser">
+            <div class="input-group" style="margin-top: 15px;">
+                <label>Nome (Máx 70 Char)</label>
+                <div class="input-wrapper"><i class="fa-solid fa-user-tie"></i><input type="text" id="cadNome" maxlength="70" required></div>
+            </div>
+            <div class="input-group-flex">
+                <div class="input-group" style="flex: 1;">
+                    <label>CPF (Validação Estrita)</label>
+                    <div class="input-wrapper"><i class="fa-solid fa-id-card"></i><input type="text" id="cadCpf" maxlength="14" required></div>
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>Senha Provisória</label>
+                    <div class="input-wrapper"><i class="fa-solid fa-key"></i><input type="text" id="cadSenha" required></div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Nível (Menor Privilégio)</label>
+                <div class="input-wrapper"><i class="fa-solid fa-layer-group"></i>
+                    <select id="cadNivel" required>
+                        <option value="1">Nível 1 - Básico</option>
+                        <option value="2">Nível 2 - Intermediário</option>
+                        <option value="3">Nível 3 - Avançado</option>
+                        <option value="4">Nível 4 - Root / Diretor</option>
+                    </select>
+                </div>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="cadLgpd" required>
+                <label for="cadLgpd">Autorização de Tratamento - LGPD</label>
+            </div>
+            <div id="cadError" class="error-msg" style="margin: 15px 0;"><i class="fa-solid fa-circle-exclamation"></i> <span id="cadErrorText"></span></div>
+            <button type="submit" class="btn-success" style="background-color: var(--primary); color: #1e293b;" id="btnCad"><span id="btnCadText"><i class="fa-solid fa-user-plus"></i> Habilitar</span><div class="loader" id="cadLoader"></div></button>
+        </form>
+        <h3 style="font-size: 1.05em; font-family: 'Merriweather', serif; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-top: 35px;">Usuários (Data Masking Ativo)</h3>
+        <div class="user-list" id="listaUsuariosUI"></div>
+        <button onclick="fazerLogout()" class="btn-danger" style="margin-top: 30px;"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+    </div>
+
+    <!-- AREA DOCUMENTO -->
+    <div id="documentoViewer">
+        <div class="header-top">
+            <h2 style="font-family: 'Merriweather', serif;"><i class="fa-solid fa-file-signature" style="color: var(--primary);"></i> Autos Restritos</h2>
+            <span class="badge-sigilo" style="color: var(--success); background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);"><i class="fa-solid fa-check-circle"></i> ACESSO DEFERIDO</span>
+        </div>
+        <p class="hint"><i class="fa-solid fa-hand-pointer"></i> Segure o cursor sobre as tarjas escuras para leitura.</p>
+        <div class="doc-paper">
+            <div class="stamp">SEGREDO DE JUSTIÇA</div>
+            <div style="text-align: center; margin-bottom: 40px;">
+                <p style="font-weight: bold; font-size: 1.1em; color: #111827; margin-top: 15px;">PROCESSO Nº 0045892-13.2025.8.17.2001</p>
+                <hr style="border: 0; border-top: 1px solid #d1d5db; width: 60%; margin: 15px auto;">
+            </div>
+            <p>Trata-se de Ação impetrada por <span class="redacted" data-level="1">COMPANHIA DE LOGÍSTICA S/A</span> em face de <span class="redacted" data-level="2">HOLDING INT. PARTICIPAÇÕES</span>.</p>
+            <p>Ocultação de patrimônio na ordem de <span class="redacted" data-level="3">R$ 85.400.000,00</span>.</p>
+            <p>Remessa para conta em <span class="redacted" data-level="4">Ilhas Cayman, Banco Pictet & Cie</span>.</p>
+            <p style="margin-top: 40px; text-align: center; font-family: 'Inter', sans-serif;">
+                <strong style="font-size: 1.1em; color: #0f172a;"><span id="docNomeAgente"></span></strong><br>
+                <em style="font-size: 0.85em; color: #6b7280;">Nível: <span id="docNivel"></span> | Sessão validada por JWT</em>
+            </p>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 25px;">
+            <button onclick="voltarParaPainel()" id="btnVoltarPainel" class="btn-secondary" style="display: none;"><i class="fa-solid fa-arrow-left"></i> Painel</button>
+            <button onclick="fazerLogout()" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Fechar Autos</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let usuarioLogado = null; let timeoutSessao; const TEMPO_LIMITE_INATIVIDADE = 10000; let respostaCaptchaAtual = 0;
+    
+    function aplicarMascaraCPF(id) {
+        document.getElementById(id).addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, "");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2"); v = v.replace(/(\d{3})(\d)/, "$1.$2"); v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            e.target.value = v;
+        });
+    }
+    aplicarMascaraCPF('loginCpf'); aplicarMascaraCPF('cadCpf');
+
+    document.getElementById('formLogin').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const cpf = document.getElementById('loginCpf').value.replace(/\D/g, "");
+        const senha = document.getElementById('loginSenha').value;
+        const errorEl = document.getElementById('loginError');
+        document.getElementById('btnLoginText').style.display = 'none'; document.getElementById('loginLoader').style.display = 'block';
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cpf, senha })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.erro);
+
+            usuarioLogado = data.usuario; localStorage.setItem('jwtToken', data.token);
+
+            errorEl.style.display = 'none';
+            if (usuarioLogado.nivel === 4) { mostrarPainelDiretor(); carregarUsuarios(); } else { visualizarDocumento(); }
+            iniciarSessaoSegura();
+        } catch (error) {
+            errorEl.style.display = 'flex'; document.getElementById('loginErrorText').innerText = error.message;
+        } finally {
+            document.getElementById('btnLoginText').style.display = 'block'; document.getElementById('loginLoader').style.display = 'none';
+        }
+    });
+
+    document.getElementById('formCadastroUser').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const dados = {
+            nome: document.getElementById('cadNome').value, cpf: document.getElementById('cadCpf').value.replace(/\D/g, ""),
+            senha: document.getElementById('cadSenha').value, nivel: document.getElementById('cadNivel').value, termoLgpd: document.getElementById('cadLgpd').checked
+        };
+        const errorEl = document.getElementById('cadError');
+        document.getElementById('btnCadText').style.display = 'none'; document.getElementById('cadLoader').style.display = 'block';
+
+        try {
+            const res = await fetch('/api/cadastrar', {
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` }, body: JSON.stringify(dados)
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.erro);
+
+            errorEl.style.display = 'none'; document.getElementById('formCadastroUser').reset(); carregarUsuarios();
+        } catch (error) {
+            errorEl.style.display = 'flex'; document.getElementById('cadErrorText').innerText = error.message;
+        } finally {
+            document.getElementById('btnCadText').style.display = 'inline'; document.getElementById('cadLoader').style.display = 'none';
+        }
+    });
+
+    async function carregarUsuarios() {
+        try {
+            const res = await fetch('/api/usuarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` } });
+            if(res.ok) renderizarLista(await res.json());
+        } catch (e) {}
+    }
+
+    async function deletarUserAPI(cpfReal) {
+        if(confirm("Revogar permissão?")) {
+            try {
+                await fetch(`/api/usuarios/${cpfReal}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` } });
+                carregarUsuarios();
+            } catch (e) {}
+        }
+    }
+
+    function renderizarLista(usuarios) {
+        const listaUI = document.getElementById('listaUsuariosUI'); listaUI.innerHTML = '';
+        const rotulos = { 1: "Lvl 1", 2: "Lvl 2", 3: "Lvl 3", 4: "Admin" };
+        usuarios.forEach(u => {
+            const btnDelete = u.nivel !== 4 ? `<button class="btn-delete-user" onclick="deletarUserAPI('${u.cpfReal}')"><i class="fa-solid fa-trash"></i></button>` : `<span style="font-size: 0.8em; color: var(--text-muted);"><i class="fa-solid fa-crown"></i> Master</span>`;
+            listaUI.innerHTML += `<div class="user-item"><div class="user-info"><span style="font-weight: 600; color: #fff;">${u.nome}</span><span style="color: var(--text-muted); font-size: 0.85em; font-family: monospace;">CPF: ${u.cpfMascarado}</span></div><div style="display: flex; align-items: center; gap: 10px;"><span class="user-badge lvl-${u.nivel}">${rotulos[u.nivel]}</span>${btnDelete}</div></div>`;
+        });
+    }
+
+    function mostrarPainelDiretor() { document.getElementById('areaAutenticacao').style.display = 'none'; document.getElementById('documentoViewer').style.display = 'none'; document.getElementById('painelDiretor').style.display = 'block'; }
+    function visualizarDocumento() { document.getElementById('areaAutenticacao').style.display = 'none'; document.getElementById('painelDiretor').style.display = 'none'; document.getElementById('documentoViewer').style.display = 'block'; document.getElementById('docNomeAgente').innerText = usuarioLogado.nome; document.getElementById('docNivel').innerText = usuarioLogado.nivel; document.getElementById('btnVoltarPainel').style.display = usuarioLogado.nivel === 4 ? 'inline-flex' : 'none'; aplicarCensuraBaseadaEmNivel(usuarioLogado.nivel); }
+    function voltarParaPainel() { mostrarPainelDiretor(); }
+    function fazerLogout() { usuarioLogado = null; localStorage.removeItem('jwtToken'); clearTimeout(timeoutSessao); document.getElementById('painelDiretor').style.display = 'none'; document.getElementById('documentoViewer').style.display = 'none'; document.getElementById('areaAutenticacao').style.display = 'block'; document.getElementById('formLogin').reset(); }
+
+    function aplicarCensuraBaseadaEmNivel(userLevel) {
+        document.querySelectorAll('.redacted').forEach(el => {
+            const reqLevel = parseInt(el.getAttribute('data-level'));
+            if (!el.dataset.originalText) el.dataset.originalText = el.innerText;
+            el.classList.remove('denied');
+            if (userLevel < reqLevel) { el.classList.add('denied'); el.innerText = '████████'; } else { el.innerText = el.dataset.originalText; }
+        });
+    }
+
+    function iniciarSessaoSegura() {
+        window.addEventListener('mousemove', resetarTemporizador); window.addEventListener('keydown', resetarTemporizador);
+        document.addEventListener("visibilitychange", () => { if (document.hidden && usuarioLogado) travarSessao("Autos recolhidos por mudança de aba."); });
+        resetarTemporizador();
+    }
+    function gerarCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1; const num2 = Math.floor(Math.random() * 10) + 1;
+        respostaCaptchaAtual = num1 + num2; document.getElementById('captchaText').innerText = `${num1} + ${num2} = ?`; document.getElementById('captchaInput').value = '';
+    }
+    function verificarCaptcha() {
+        if (parseInt(document.getElementById('captchaInput').value) === respostaCaptchaAtual) {
+            document.getElementById('mainContainer').querySelectorAll('> div').forEach(d => d.classList.remove('blur-ativo'));
+            document.getElementById('telaBloqueio').style.display = "none"; resetarTemporizador();
+        } else { gerarCaptcha(); }
+    }
+    function travarSessao(motivo) {
+        if (!usuarioLogado) return; 
+        document.getElementById('mainContainer').querySelectorAll('> div').forEach(d => d.classList.add('blur-ativo'));
+        document.getElementById('telaBloqueio').classList.remove('blur-ativo'); document.getElementById('telaBloqueio').style.display = "flex";
+        document.getElementById('motivoBloqueio').innerText = motivo; gerarCaptcha(); clearTimeout(timeoutSessao);
+    }
+    function resetarTemporizador() { clearTimeout(timeoutSessao); if(document.getElementById('telaBloqueio').style.display !== "flex" && usuarioLogado) { timeoutSessao = setTimeout(() => travarSessao("Autos recolhidos por inatividade (10s)."), TEMPO_LIMITE_INATIVIDADE); } }
+    document.addEventListener('contextmenu', e => e.preventDefault());
+</script>
+</body>
+</html>
