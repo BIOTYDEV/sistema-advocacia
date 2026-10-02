@@ -61,7 +61,6 @@
 <body>
 <div class="watermark"><span>SEGREDO DE JUSTIÇA</span> <span>IP: 192.168.1.104</span> <span>ART. 189 CPC</span></div>
 <div class="container" id="mainContainer">
-    
     <div id="telaBloqueio">
         <div class="lock-icon-wrapper"><i class="fa-solid fa-scale-balanced"></i></div>
         <h3 style="color: white; margin-bottom: 5px; font-family: 'Merriweather', serif;">Autos Bloqueados</h3>
@@ -92,7 +91,7 @@
         <form id="formLogin">
             <div class="input-group">
                 <label>CPF do Advogado (11 dígitos)</label>
-                <!-- CORREÇÃO 1: onkeypress bloqueia qualquer tecla não numérica -->
+                <!-- Bloqueia letras no teclado (onkeypress) -->
                 <div class="input-wrapper"><i class="fa-solid fa-id-card"></i><input type="tel" id="loginCpf" maxlength="14" required placeholder="000.000.000-00" onkeypress="return event.charCode >= 48 && event.charCode <= 57"></div>
             </div>
             <div class="input-group">
@@ -111,7 +110,7 @@
             <span class="badge-sigilo" style="background: rgba(197, 168, 128, 0.2); color: var(--primary); border-color: var(--primary);"><i class="fa-solid fa-star"></i> Sócio / Master</span>
         </div>
         <button onclick="visualizarDocumento()" class="btn-secondary" style="margin-bottom: 25px;"><i class="fa-solid fa-folder-open"></i> Acessar Processo</button>
-        <h3 style="font-size: 1.05em; font-family: 'Merriweather', serif; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Novo Agente (Criptografia no Back-End)</h3>
+        <h3 style="font-size: 1.05em; font-family: 'Merriweather', serif; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Novo Agente</h3>
         <form id="formCadastroUser">
             <div class="input-group" style="margin-top: 15px;">
                 <label>Nome (Máx 70 Char)</label>
@@ -120,7 +119,6 @@
             <div class="input-group-flex">
                 <div class="input-group" style="flex: 1;">
                     <label>CPF (Validação Estrita)</label>
-                    <!-- CORREÇÃO 1: onkeypress bloqueia qualquer tecla não numérica -->
                     <div class="input-wrapper"><i class="fa-solid fa-id-card"></i><input type="tel" id="cadCpf" maxlength="14" required placeholder="000.000.000-00" onkeypress="return event.charCode >= 48 && event.charCode <= 57"></div>
                 </div>
                 <div class="input-group" style="flex: 1;">
@@ -169,7 +167,7 @@
             <p>Remessa para conta em <span class="redacted" data-level="4">Ilhas Cayman, Banco Pictet & Cie</span>.</p>
             <p style="margin-top: 40px; text-align: center; font-family: 'Inter', sans-serif;">
                 <strong style="font-size: 1.1em; color: #0f172a;"><span id="docNomeAgente"></span></strong><br>
-                <em style="font-size: 0.85em; color: #6b7280;">Nível: <span id="docNivel"></span> | Sessão validada por JWT</em>
+                <em style="font-size: 0.85em; color: #6b7280;">Nível: <span id="docNivel"></span> | Sessão validada</em>
             </p>
         </div>
         <div style="display: flex; gap: 10px; margin-top: 25px;">
@@ -182,10 +180,13 @@
 <script>
     let usuarioLogado = null; let timeoutSessao; const TEMPO_LIMITE_INATIVIDADE = 10000; let respostaCaptchaAtual = 0;
     
+    // MÁSCARA CORRIGIDA
     function aplicarMascaraCPF(id) {
         document.getElementById(id).addEventListener('input', function(e) {
-            let v = e.target.value.replace(/\D/g, "");
-            v = v.replace(/(\d{3})(\d)/, "$1.$2"); v = v.replace(/(\d{3})(\d)/, "$1.$2"); v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            let v = e.target.value.replace(/\D/g, ""); // Apenas números
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
             e.target.value = v;
         });
     }
@@ -206,15 +207,13 @@
             if (!res.ok) throw new Error(data.erro || "Falha na comunicação com o servidor.");
 
             usuarioLogado = data.usuario; localStorage.setItem('jwtToken', data.token);
-
             errorEl.style.display = 'none';
             if (usuarioLogado.nivel === 4) { mostrarPainelDiretor(); carregarUsuarios(); } else { visualizarDocumento(); }
             iniciarSessaoSegura();
         } catch (error) {
-            // CORREÇÃO 2: BYPASS DE EMERGÊNCIA NO FRONT-END
-            // Se a API da Vercel estiver derrubando a requisição, o sistema forçará a entrada localmente.
+            // BYPASS DE EMERGÊNCIA ATIVO PARA A APRESENTAÇÃO
             if (cpf === "00000000000" && senha === "admin") {
-                console.warn("API Falhou. Ativando Bypass de Emergência para Apresentação.");
+                console.warn("Ativando Bypass de Emergência");
                 usuarioLogado = { nome: "Sócio (Modo de Segurança)", nivel: 4, cpf: "***.***.000-00" };
                 localStorage.setItem('jwtToken', "token_de_emergencia");
                 errorEl.style.display = 'none';
