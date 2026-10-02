@@ -1,7 +1,7 @@
 {
-  "name": "sistema-advocacia-deploy",
-  "version": "3.0.0",
-  "description": "API Segura preparada para Vercel e Firebase",
+  "name": "sistema-advocacia-deploy-final",
+  "version": "4.0.0",
+  "description": "API Segura preparada para Vercel e Firebase (Bypass Absoluto)",
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",
